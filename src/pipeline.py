@@ -10,7 +10,10 @@ def extract_data(project_id: str, bq_table: str, dataset_out: dsl.Output[dsl.Dat
     client = bigquery.Client(project=project_id)
     # E.g., 'SELECT * FROM `my_project.my_dataset.my_table`'
     query = f"""SELECT IND, RAIN, IND1, T_MAX, IND_2, T_MIN, T_MIN_G,
-    T_MAX_CLEANSED, T_MAX_CLEANSED_FROM_RAW, T_MAX_FLOAT, T_MIN_CLEANSED, WIND FROM `{bq_table}`"""
+    T_MAX_CLEANSED, T_MAX_CLEANSED_FROM_RAW, T_MAX_FLOAT, T_MIN_CLEANSED, WIND FROM `{bq_table}`
+    where T_MAX_CLEANSED is not null and T_MIN_CLEANSED is not null and T_MAX_CLEANSED_FROM_RAW is not null 
+    and T_MAX_FLOAT is not null and T_MIN_CLEANSED is not null and WIND is not null and RAIN is not null
+    """
     
     df = client.query(query).to_dataframe()
     # Save to the pipeline artifact path
