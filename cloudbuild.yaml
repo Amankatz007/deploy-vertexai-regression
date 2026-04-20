@@ -1,0 +1,26 @@
+steps:
+  # Install dependencies
+  - name: 'python:3.10-slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install -r requirements.txt
+    
+  # Submit pipeline to Vertex AI
+  - name: 'python:3.10-slim'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Re-install dependencies (since steps run in separate containers by default)
+        pip install -r requirements.txt
+        python src/submit_pipeline.py
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
+      - 'REGION=us-central1'
+      - 'BUCKET_NAME=$_BUCKET_NAME'
+      - 'BQ_TABLE=$_BQ_TABLE'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
